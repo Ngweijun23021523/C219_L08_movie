@@ -3,17 +3,33 @@ const KEY = "663fcc9b";
 
 function App() {
   const [movies, setMovies] = useState([]);
-  useEffect(()=>{
-    fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=batman`)
-    .then((res) => res.json())
-    .then((data) => setMovies(data.Search));
-  },[]);
+  const [query, setQuery] = useState("batman");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    // Effect
+    fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,{
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => data.Response === "True" && setMovies(data.Search))
+      .catch((err) => console.log(err));
+      return () => {
+        controller.abort();
+      }
+  }, [query]);
 
   
+
   return (
     <div>
       <h1>Movies</h1>
-      <input type="text" placeholder="Search movies..." />
+      <input
+        value={query}
+        type="text"
+        placeholder="Search movies..."
+        onChange={(e) => setQuery(e.target.value)}
+      />
       <table>
         <thead>
           <tr>
