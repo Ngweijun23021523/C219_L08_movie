@@ -3,11 +3,13 @@ const KEY = "663fcc9b";
 
 function App() {
   const [movies, setMovies] = useState([]);
-
-  fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=batman`)
+  useEffect(()=>{
+    fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=batman`)
     .then((res) => res.json())
     .then((data) => setMovies(data.Search));
+  },[]);
 
+  
   return (
     <div>
       <h1>Movies</h1>
